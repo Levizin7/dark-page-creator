@@ -1,17 +1,26 @@
-import { useState } from "react";
-import { Home, BarChart3, ArrowLeftRight, Bell, User } from "lucide-react";
+import { Home, BarChart3, ArrowLeftRight, PiggyBank, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const tabs = [
-  { icon: Home, label: "Home" },
-  { icon: BarChart3, label: "Analytics" },
-  { icon: ArrowLeftRight, label: "Transfer" },
-  { icon: Bell, label: "Alerts" },
-  { icon: User, label: "Profile" },
+  { icon: Home, label: "Início", path: "/" },
+  { icon: BarChart3, label: "Extrato", path: "/extrato" },
+  { icon: ArrowLeftRight, label: "Transferir", path: "/" },
+  { icon: PiggyBank, label: "Cofrinhos", path: "/cofrinhos" },
+  { icon: User, label: "Perfil", path: "/" },
 ];
 
 const BottomNav = () => {
-  const [active, setActive] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getActiveIndex = () => {
+    if (location.pathname === "/extrato") return 1;
+    if (location.pathname === "/cofrinhos") return 3;
+    return 0;
+  };
+
+  const active = getActiveIndex();
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.3)] z-50">
@@ -20,7 +29,7 @@ const BottomNav = () => {
           <motion.button
             key={tab.label}
             whileTap={{ scale: 0.85 }}
-            onClick={() => setActive(i)}
+            onClick={() => navigate(tab.path)}
             className="flex flex-col items-center gap-0.5 px-3 py-1 relative"
           >
             {active === i && (
