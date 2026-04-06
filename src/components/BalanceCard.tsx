@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Eye, EyeOff, TrendingUp, TrendingDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const BalanceCard = () => {
   const [balance, setBalance] = useState(12450.75);
   const [editing, setEditing] = useState(false);
   const [visible, setVisible] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const income = 4200.0;
   const expenses = 2780.5;
@@ -20,7 +22,7 @@ const BalanceCard = () => {
   }, [editing]);
 
   const formatCurrency = (val: number) =>
-    val.toLocaleString("en-US", { style: "currency", currency: "USD" });
+    val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
     <motion.div
@@ -30,7 +32,7 @@ const BalanceCard = () => {
       className="mx-5 rounded-2xl bg-gradient-to-br from-primary to-primary/80 p-5 shadow-lg shadow-primary/20"
     >
       <div className="flex items-center justify-between mb-1">
-        <span className="text-sm text-primary-foreground/70 font-body">Total Balance</span>
+        <span className="text-sm text-primary-foreground/70 font-body">Saldo Total</span>
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => setVisible(!visible)}
@@ -52,16 +54,24 @@ const BalanceCard = () => {
           onChange={(e) => setBalance(Number(e.target.value))}
           onBlur={() => setEditing(false)}
           onKeyDown={(e) => e.key === "Enter" && setEditing(false)}
-          className="bg-transparent text-primary-foreground font-heading font-bold text-3xl outline-none border-b border-accent w-full mb-4"
+          className="bg-transparent text-primary-foreground font-heading font-bold text-3xl outline-none border-b border-accent w-full mb-2"
         />
       ) : (
         <h2
           onClick={() => setEditing(true)}
-          className="font-heading font-bold text-3xl text-primary-foreground cursor-pointer mb-4 hover:opacity-80 transition-opacity"
+          className="font-heading font-bold text-3xl text-primary-foreground cursor-pointer mb-2 hover:opacity-80 transition-opacity"
         >
           {visible ? formatCurrency(balance) : "••••••"}
         </h2>
       )}
+
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate("/extrato")}
+        className="text-xs font-body font-medium text-accent underline underline-offset-2 mb-4 block"
+      >
+        Ver mais
+      </motion.button>
 
       <div className="flex gap-4 mb-4">
         <div className="flex items-center gap-2">
@@ -69,7 +79,7 @@ const BalanceCard = () => {
             <TrendingUp size={14} className="text-success" />
           </div>
           <div>
-            <p className="text-[10px] text-primary-foreground/60 font-body">Income</p>
+            <p className="text-[10px] text-primary-foreground/60 font-body">Receitas</p>
             <p className="text-sm font-semibold text-success font-body">{formatCurrency(income)}</p>
           </div>
         </div>
@@ -78,7 +88,7 @@ const BalanceCard = () => {
             <TrendingDown size={14} className="text-destructive" />
           </div>
           <div>
-            <p className="text-[10px] text-primary-foreground/60 font-body">Expenses</p>
+            <p className="text-[10px] text-primary-foreground/60 font-body">Despesas</p>
             <p className="text-sm font-semibold text-destructive font-body">{formatCurrency(expenses)}</p>
           </div>
         </div>
@@ -86,7 +96,7 @@ const BalanceCard = () => {
 
       <div>
         <div className="flex justify-between text-[10px] text-primary-foreground/60 mb-1 font-body">
-          <span>Budget used</span>
+          <span>Orçamento usado</span>
           <span>{budgetUsed.toFixed(0)}%</span>
         </div>
         <div className="w-full h-1.5 bg-primary-foreground/10 rounded-full overflow-hidden">
