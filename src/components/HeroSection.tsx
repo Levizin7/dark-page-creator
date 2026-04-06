@@ -73,7 +73,7 @@ const HeroSection = () => {
           </motion.button>
         </div>
 
-        {/* Balance */}
+        {/* Balance + Ver extrato */}
         <div className="mb-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm text-primary-foreground/60 font-body">Meu saldo</span>
@@ -81,24 +81,37 @@ const HeroSection = () => {
               {visible ? <Eye size={16} className="text-primary-foreground/50" /> : <EyeOff size={16} className="text-primary-foreground/50" />}
             </motion.button>
           </div>
-          {editingBalance ? (
-            <input
-              ref={balanceRef}
-              type="number"
-              value={balance}
-              onChange={(e) => setBalance(Number(e.target.value))}
-              onBlur={() => setEditingBalance(false)}
-              onKeyDown={(e) => e.key === "Enter" && setEditingBalance(false)}
-              className="bg-transparent text-primary-foreground font-heading font-bold text-3xl outline-none border-b border-accent w-full"
-            />
-          ) : (
-            <h2
-              onClick={() => setEditingBalance(true)}
-              className="font-heading font-bold text-3xl text-primary-foreground cursor-pointer hover:opacity-80 transition-opacity"
+          <div className="flex items-center justify-between">
+            <div>
+              {editingBalance ? (
+                <input
+                  ref={balanceRef}
+                  type="number"
+                  value={balance}
+                  onChange={(e) => setBalance(Number(e.target.value))}
+                  onBlur={() => setEditingBalance(false)}
+                  onKeyDown={(e) => e.key === "Enter" && setEditingBalance(false)}
+                  className="bg-transparent text-primary-foreground font-heading font-bold text-3xl outline-none border-b border-accent w-full"
+                />
+              ) : (
+                <h2
+                  onClick={() => setEditingBalance(true)}
+                  className="font-heading font-bold text-3xl text-primary-foreground cursor-pointer hover:opacity-80 transition-opacity"
+                >
+                  {visible ? formatCurrency(balance) : "R$ ••••••"}
+                </h2>
+              )}
+            </div>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              onClick={() => navigate("/extrato")}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent/20 border border-accent/30 text-accent font-body font-semibold text-xs hover:bg-accent/30 transition-colors"
             >
-              {visible ? formatCurrency(balance) : "R$ ••••••"}
-            </h2>
-          )}
+              Ver extrato
+              <ArrowRight size={14} />
+            </motion.button>
+          </div>
         </div>
 
         {/* Quick stats row */}
@@ -140,41 +153,40 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Animated wave separator */}
+      {/* Animated wave separator - tokyonight style */}
       <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-[0] translate-y-[1px]">
         <svg
-          className="relative block w-full h-10"
-          viewBox="0 0 400 40"
+          className="relative block w-full"
+          style={{ height: 70 }}
+          viewBox="0 0 1440 120"
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
+          {/* Back wave - lighter accent */}
           <motion.path
-            initial={{ d: "M0,20 C80,35 150,5 200,20 C250,35 320,5 400,20 L400,40 L0,40 Z" }}
             animate={{
               d: [
-                "M0,20 C80,35 150,5 200,20 C250,35 320,5 400,20 L400,40 L0,40 Z",
-                "M0,18 C70,5 160,35 200,18 C240,5 330,35 400,18 L400,40 L0,40 Z",
-                "M0,22 C90,35 140,8 200,22 C260,35 310,8 400,22 L400,40 L0,40 Z",
-                "M0,20 C80,35 150,5 200,20 C250,35 320,5 400,20 L400,40 L0,40 Z",
+                "M0,60 C240,110 480,20 720,60 C960,100 1200,30 1440,60 L1440,120 L0,120 Z",
+                "M0,50 C240,20 480,100 720,50 C960,20 1200,100 1440,50 L1440,120 L0,120 Z",
+                "M0,60 C240,110 480,20 720,60 C960,100 1200,30 1440,60 L1440,120 L0,120 Z",
+              ],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            fill="hsl(var(--accent) / 0.15)"
+          />
+          {/* Front wave - background color */}
+          <motion.path
+            animate={{
+              d: [
+                "M0,80 C200,100 400,50 600,70 C800,90 1000,40 1200,70 C1300,85 1400,60 1440,80 L1440,120 L0,120 Z",
+                "M0,70 C200,50 400,95 600,75 C800,55 1000,90 1200,65 C1300,55 1400,80 1440,70 L1440,120 L0,120 Z",
+                "M0,80 C200,100 400,50 600,70 C800,90 1000,40 1200,70 C1300,85 1400,60 1440,80 L1440,120 L0,120 Z",
               ],
             }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             fill="hsl(var(--background))"
           />
         </svg>
-      </div>
-
-      {/* "Ver extrato" floating button */}
-      <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 z-10">
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.03 }}
-          onClick={() => navigate("/extrato")}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-accent text-accent-foreground font-body font-semibold text-sm shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-shadow"
-        >
-          Ver extrato
-          <ArrowRight size={16} />
-        </motion.button>
       </div>
     </div>
   );
