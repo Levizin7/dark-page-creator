@@ -1,5 +1,4 @@
-import DashboardHeader from "@/components/DashboardHeader";
-import BalanceCard from "@/components/BalanceCard";
+import HeroSection from "@/components/HeroSection";
 import QuickActions from "@/components/QuickActions";
 import RecentTransactions from "@/components/RecentTransactions";
 import BottomNav from "@/components/BottomNav";
@@ -7,9 +6,10 @@ import BottomNav from "@/components/BottomNav";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto relative">
-      <DashboardHeader />
-      <BalanceCard />
-      <QuickActions />
+      <HeroSection />
+      <div className="mt-8">
+        <QuickActions />
+      </div>
       <RecentTransactions />
       <BottomNav />
     </div>
