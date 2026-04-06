@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Eye, EyeOff, TrendingUp, TrendingDown } from "lucide-react";
+import { Eye, EyeOff, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -67,10 +67,12 @@ const BalanceCard = () => {
 
       <motion.button
         whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.02 }}
         onClick={() => navigate("/extrato")}
-        className="text-xs font-body font-medium text-accent underline underline-offset-2 mb-4 block"
+        className="w-full mt-1 mb-4 py-2.5 rounded-xl bg-accent/20 border border-accent/30 text-accent font-body font-semibold text-sm flex items-center justify-center gap-2 hover:bg-accent/30 transition-colors"
       >
-        Ver mais
+        Ver extrato
+        <ArrowRight size={16} />
       </motion.button>
 
       <div className="flex gap-4 mb-4">
