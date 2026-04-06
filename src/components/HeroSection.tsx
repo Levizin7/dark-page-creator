@@ -4,10 +4,15 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import novaLogo from "@/assets/novabank-logo.png";
 
+const formatCurrencyFromCents = (cents: number) => {
+  const amount = cents / 100;
+  return amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+};
+
 const HeroSection = () => {
   const [name, setName] = useState("Carlos");
   const [editingName, setEditingName] = useState(false);
-  const [balance, setBalance] = useState(12450.75);
+  const [balanceCents, setBalanceCents] = useState(1245075); // R$ 12.450,75
   const [editingBalance, setEditingBalance] = useState(false);
   const [visible, setVisible] = useState(true);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -22,7 +27,12 @@ const HeroSection = () => {
     if (editingName && nameRef.current) { nameRef.current.focus(); nameRef.current.select(); }
   }, [editingName]);
   useEffect(() => {
-    if (editingBalance && balanceRef.current) { balanceRef.current.focus(); balanceRef.current.select(); }
+    if (editingBalance && balanceRef.current) {
+      balanceRef.current.focus();
+      // place cursor at end
+      const val = balanceRef.current.value;
+      balanceRef.current.setSelectionRange(val.length, val.length);
+    }
   }, [editingBalance]);
 
   const getGreeting = () => {
@@ -35,9 +45,13 @@ const HeroSection = () => {
   const formatCurrency = (val: number) =>
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+  const handleBalanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    setBalanceCents(Number(raw) || 0);
+  };
+
   return (
     <div className="relative">
-      {/* Gradient background — softer */}
       <div className="bg-gradient-to-b from-primary/80 via-primary/60 to-primary/30 pt-12 pb-14 px-6">
         {/* Header row */}
         <div className="flex items-center justify-between mb-8">
@@ -88,19 +102,21 @@ const HeroSection = () => {
               {editingBalance ? (
                 <input
                   ref={balanceRef}
-                  type="number"
-                  value={balance}
-                  onChange={(e) => setBalance(Number(e.target.value))}
+                  type="text"
+                  inputMode="numeric"
+                  value={formatCurrencyFromCents(balanceCents)}
+                  onChange={handleBalanceChange}
                   onBlur={() => setEditingBalance(false)}
                   onKeyDown={(e) => e.key === "Enter" && setEditingBalance(false)}
-                  className="bg-transparent text-foreground font-heading font-bold text-[34px] leading-tight outline-none border-b border-accent w-full"
+                  placeholder="R$ 0,00"
+                  className="bg-transparent text-foreground font-heading font-bold text-[34px] leading-tight outline-none border-b border-accent w-full appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 />
               ) : (
                 <h2
                   onClick={() => setEditingBalance(true)}
                   className="font-heading font-bold text-[34px] leading-tight text-foreground cursor-pointer hover:opacity-80 transition-opacity"
                 >
-                  {visible ? formatCurrency(balance) : "R$ ••••••"}
+                  {visible ? formatCurrencyFromCents(balanceCents) : "R$ ••••••"}
                 </h2>
               )}
             </div>
@@ -156,37 +172,28 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Subtle decorative wave */}
-      <div className="absolute -bottom-px left-0 right-0 overflow-hidden leading-[0]">
-        <svg
-          className="relative block w-full"
-          style={{ height: 32 }}
-          viewBox="0 0 1440 32"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="hsl(217 91% 60%)" stopOpacity="0.08" />
-              <stop offset="50%" stopColor="hsl(217 91% 60%)" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="hsl(217 91% 60%)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <motion.path
-            animate={{
-              d: [
-                "M0,20 C360,32 720,8 1080,20 C1260,26 1380,14 1440,20 L1440,32 L0,32 Z",
-                "M0,18 C360,6 720,28 1080,18 C1260,12 1380,24 1440,18 L1440,32 L0,32 Z",
-                "M0,20 C360,32 720,8 1080,20 C1260,26 1380,14 1440,20 L1440,32 L0,32 Z",
-              ],
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            fill="url(#waveGrad)"
+      {/* Decorative waves */}
+      <div className="absolute -bottom-[60px] left-0 right-0 h-[100px] overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L0,120Z"
+            fill="rgba(30, 58, 138, 0.06)"
           />
           <path
-            d="M0,24 C480,32 960,16 1440,24 L1440,32 L0,32 Z"
-            fill="hsl(var(--background))"
+            d="M0,96L48,90.7C96,85,192,75,288,74.7C384,75,480,85,576,85.3C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,120L0,120Z"
+            fill="rgba(30, 58, 138, 0.03)"
           />
+          <path
+            d="M0,80L60,74.7C120,69,240,59,360,58.7C480,59,600,69,720,74.7C840,80,960,80,1080,74.7C1200,69,1320,59,1380,53.3L1440,48L1440,120L0,120Z"
+            fill="rgba(30, 58, 138, 0.04)"
+          />
+        </svg>
+      </div>
+
+      {/* Bottom fade into background */}
+      <div className="absolute -bottom-px left-0 right-0 overflow-hidden leading-[0]">
+        <svg className="relative block w-full" style={{ height: 32 }} viewBox="0 0 1440 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,24 C480,32 960,16 1440,24 L1440,32 L0,32 Z" fill="hsl(var(--background))" />
         </svg>
       </div>
     </div>
