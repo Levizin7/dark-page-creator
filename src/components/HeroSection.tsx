@@ -172,25 +172,57 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Decorative waves */}
-      <div className="absolute -bottom-[60px] left-0 right-0 h-[100px] overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+      {/* Decorative animated waves */}
+      <div className="absolute -bottom-[50px] left-0 right-0 h-[100px] overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
         <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L0,120Z"
-            fill="rgba(30, 58, 138, 0.06)"
+          <defs>
+            <linearGradient id="wave1Grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="hsl(217 91% 60%)" stopOpacity="0.07" />
+              <stop offset="50%" stopColor="hsl(200 80% 55%)" stopOpacity="0.05" />
+              <stop offset="100%" stopColor="hsl(217 91% 60%)" stopOpacity="0.02" />
+            </linearGradient>
+            <linearGradient id="wave2Grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="hsl(217 91% 60%)" stopOpacity="0.04" />
+              <stop offset="100%" stopColor="hsl(200 80% 55%)" stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
+          <motion.path
+            animate={{
+              d: [
+                "M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L0,120Z",
+                "M0,48L48,53.3C96,59,192,69,288,74.7C384,80,480,80,576,69.3C672,59,768,37,864,32C960,27,1056,37,1152,48C1248,59,1344,69,1392,74.7L1440,80L1440,120L0,120Z",
+                "M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L0,120Z",
+              ],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            fill="url(#wave1Grad)"
           />
-          <path
-            d="M0,96L48,90.7C96,85,192,75,288,74.7C384,75,480,85,576,85.3C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,120L0,120Z"
+          <motion.path
+            animate={{
+              d: [
+                "M0,96L48,90.7C96,85,192,75,288,74.7C384,75,480,85,576,85.3C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,120L0,120Z",
+                "M0,80L48,85.3C96,91,192,101,288,96C384,91,480,69,576,64C672,59,768,69,864,80C960,91,1056,101,1152,96C1248,91,1344,69,1392,58.7L1440,53L1440,120L0,120Z",
+                "M0,96L48,90.7C96,85,192,75,288,74.7C384,75,480,85,576,85.3C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,120L0,120Z",
+              ],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            fill="url(#wave2Grad)"
+          />
+          <motion.path
+            animate={{
+              d: [
+                "M0,80L60,74.7C120,69,240,59,360,58.7C480,59,600,69,720,74.7C840,80,960,80,1080,74.7C1200,69,1320,59,1380,53.3L1440,48L1440,120L0,120Z",
+                "M0,69L60,74.7C120,80,240,91,360,90.7C480,91,600,80,720,69.3C840,59,960,48,1080,48C1200,48,1320,59,1380,64L1440,69L1440,120L0,120Z",
+                "M0,80L60,74.7C120,69,240,59,360,58.7C480,59,600,69,720,74.7C840,80,960,80,1080,74.7C1200,69,1320,59,1380,53.3L1440,48L1440,120L0,120Z",
+              ],
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
             fill="rgba(30, 58, 138, 0.03)"
-          />
-          <path
-            d="M0,80L60,74.7C120,69,240,59,360,58.7C480,59,600,69,720,74.7C840,80,960,80,1080,74.7C1200,69,1320,59,1380,53.3L1440,48L1440,120L0,120Z"
-            fill="rgba(30, 58, 138, 0.04)"
           />
         </svg>
       </div>
 
-      {/* Bottom fade into background */}
+      {/* Bottom fade */}
       <div className="absolute -bottom-px left-0 right-0 overflow-hidden leading-[0]">
         <svg className="relative block w-full" style={{ height: 32 }} viewBox="0 0 1440 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0,24 C480,32 960,16 1440,24 L1440,32 L0,32 Z" fill="hsl(var(--background))" />
