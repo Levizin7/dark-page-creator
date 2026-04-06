@@ -38,11 +38,13 @@ const HeroSection = () => {
   return (
     <div className="relative">
       {/* Gradient background */}
-      <div className="bg-gradient-to-br from-primary via-primary/90 to-accent/40 pt-12 pb-20 px-5">
+      <div className="bg-gradient-to-br from-primary via-primary/90 to-accent/40 pt-12 pb-10 px-5">
         {/* Header row */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <img src={novaLogo} alt="NovaBank" width={36} height={36} className="rounded-lg" />
+            <div className="w-10 h-10 rounded-xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center ring-1 ring-primary-foreground/10 shadow-lg">
+              <img src={novaLogo} alt="NovaBank" width={28} height={28} className="rounded-md" />
+            </div>
             <div>
               <p className="text-xs text-primary-foreground/60 font-body">{getGreeting()},</p>
               {editingName ? (
@@ -153,37 +155,24 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Animated wave separator - tokyonight style */}
-      <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-[0] translate-y-[1px]">
+      {/* Smooth wave separator */}
+      <div className="absolute -bottom-[1px] left-0 right-0 overflow-hidden leading-[0]">
         <svg
           className="relative block w-full"
-          style={{ height: 70 }}
-          viewBox="0 0 1440 120"
+          style={{ height: 40 }}
+          viewBox="0 0 1440 40"
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Back wave - lighter accent */}
           <motion.path
             animate={{
               d: [
-                "M0,60 C240,110 480,20 720,60 C960,100 1200,30 1440,60 L1440,120 L0,120 Z",
-                "M0,50 C240,20 480,100 720,50 C960,20 1200,100 1440,50 L1440,120 L0,120 Z",
-                "M0,60 C240,110 480,20 720,60 C960,100 1200,30 1440,60 L1440,120 L0,120 Z",
+                "M0,25 C360,40 720,10 1080,25 C1260,32 1380,18 1440,25 L1440,40 L0,40 Z",
+                "M0,22 C360,8 720,36 1080,22 C1260,15 1380,30 1440,22 L1440,40 L0,40 Z",
+                "M0,25 C360,40 720,10 1080,25 C1260,32 1380,18 1440,25 L1440,40 L0,40 Z",
               ],
             }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            fill="hsl(var(--accent) / 0.15)"
-          />
-          {/* Front wave - background color */}
-          <motion.path
-            animate={{
-              d: [
-                "M0,80 C200,100 400,50 600,70 C800,90 1000,40 1200,70 C1300,85 1400,60 1440,80 L1440,120 L0,120 Z",
-                "M0,70 C200,50 400,95 600,75 C800,55 1000,90 1200,65 C1300,55 1400,80 1440,70 L1440,120 L0,120 Z",
-                "M0,80 C200,100 400,50 600,70 C800,90 1000,40 1200,70 C1300,85 1400,60 1440,80 L1440,120 L0,120 Z",
-              ],
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             fill="hsl(var(--background))"
           />
         </svg>
