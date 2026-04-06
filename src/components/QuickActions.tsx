@@ -15,20 +15,20 @@ const QuickActions = () => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="px-5 py-4"
+      className="px-6 py-4"
     >
-      <h3 className="text-sm font-heading font-semibold text-muted-foreground mb-3">Ações Rápidas</h3>
-      <div className="grid grid-cols-4 gap-3">
+      <h3 className="text-sm font-heading font-semibold text-muted-foreground mb-4">Ações Rápidas</h3>
+      <div className="grid grid-cols-4 gap-4">
         {actions.map((action) => (
           <motion.button
             key={action.label}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.93 }}
             onClick={() => toast(`${action.label} pressionado`)}
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-2.5"
           >
-            <div className={`w-14 h-14 rounded-2xl ${action.color} flex items-center justify-center shadow-md transition-shadow hover:shadow-lg`}>
-              <action.icon size={22} />
+            <div className={`w-16 h-16 rounded-2xl ${action.color} glass flex items-center justify-center shadow-md transition-all hover:shadow-lg`}>
+              <action.icon size={24} />
             </div>
             <span className="text-xs font-body text-muted-foreground font-medium">{action.label}</span>
           </motion.button>
