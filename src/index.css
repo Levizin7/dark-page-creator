@@ -6,47 +6,47 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7.1%;
+    --background: 222 47% 11%;
     --foreground: 0 0% 100%;
 
-    --card: 0 0% 11.8%;
+    --card: 220 20% 14%;
     --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 11.8%;
+    --popover: 220 20% 14%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 213 45% 21.6%;
+    --primary: 217 60% 28%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 205 60% 52.5%;
+    --secondary: 217 91% 60%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 80%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 10% 75%;
 
-    --accent: 205 60% 52.5%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 355 78% 56.1%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 145 63% 42%;
+    --success: 160 64% 40%;
     --success-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 205 60% 52.5%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 217 91% 60%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 7.1%;
-    --sidebar-foreground: 0 0% 80%;
-    --sidebar-primary: 205 60% 52.5%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 220 10% 75%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent: 220 20% 18%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 205 60% 52.5%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 217 91% 60%;
 
     --font-heading: 'Montserrat', sans-serif;
     --font-body: 'Poppins', sans-serif;
@@ -61,6 +61,8 @@
   body {
     @apply bg-background text-foreground font-body;
     font-family: var(--font-body);
+    background: linear-gradient(180deg, hsl(222 47% 11%) 0%, hsl(217 33% 17%) 100%);
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -74,5 +76,11 @@
   }
   .font-body {
     font-family: var(--font-body);
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 }

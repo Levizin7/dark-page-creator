@@ -22,13 +22,13 @@ const RecentTransactions = () => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
-      className="px-5 pb-24"
+      className="px-6 pb-24"
     >
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-heading font-semibold text-muted-foreground">Transações Recentes</h3>
         <button onClick={() => navigate("/extrato")} className="text-xs text-accent font-body font-medium">Ver tudo</button>
       </div>
-      <div className="space-y-2.5">
+      <div className="space-y-3">
         {transactions.map((tx, i) => (
           <motion.div
             key={i}
@@ -37,10 +37,10 @@ const RecentTransactions = () => {
             transition={{ delay: 0.35 + i * 0.05 }}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-3 bg-card rounded-xl p-3.5 shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+            className="flex items-center gap-3.5 glass rounded-2xl p-4 cursor-pointer hover:bg-white/[0.07] transition-all"
           >
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+              className={`w-11 h-11 rounded-xl flex items-center justify-center ${
                 tx.type === "income" ? "bg-success/15" : "bg-destructive/15"
               }`}
             >
