@@ -172,18 +172,18 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Decorative animated waves */}
-      <div className="absolute -bottom-[50px] left-0 right-0 h-[100px] overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-        <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Decorative animated waves - inverted, falling from card */}
+      <div className="absolute -bottom-[80px] left-0 right-0 h-[100px] pointer-events-none" style={{ zIndex: 1, transform: "scaleY(-1)" }}>
+        <svg className="w-full h-full" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="wave1Grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="hsl(217 91% 60%)" stopOpacity="0.07" />
-              <stop offset="50%" stopColor="hsl(200 80% 55%)" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="hsl(217 91% 60%)" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="hsl(217 91% 60%)" stopOpacity="0.08" />
+              <stop offset="50%" stopColor="hsl(200 80% 55%)" stopOpacity="0.06" />
+              <stop offset="100%" stopColor="hsl(217 91% 60%)" stopOpacity="0.03" />
             </linearGradient>
             <linearGradient id="wave2Grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="hsl(217 91% 60%)" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="hsl(200 80% 55%)" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="hsl(217 91% 60%)" stopOpacity="0.05" />
+              <stop offset="100%" stopColor="hsl(200 80% 55%)" stopOpacity="0.03" />
             </linearGradient>
           </defs>
           <motion.path
@@ -217,15 +217,8 @@ const HeroSection = () => {
               ],
             }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            fill="rgba(30, 58, 138, 0.03)"
+            fill="rgba(30, 58, 138, 0.04)"
           />
-        </svg>
-      </div>
-
-      {/* Bottom fade */}
-      <div className="absolute -bottom-px left-0 right-0 overflow-hidden leading-[0]">
-        <svg className="relative block w-full" style={{ height: 32 }} viewBox="0 0 1440 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,24 C480,32 960,16 1440,24 L1440,32 L0,32 Z" fill="hsl(var(--background))" />
         </svg>
       </div>
     </div>
