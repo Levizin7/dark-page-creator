@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Search, ArrowUpRight, QrCode, Zap, Building2, User, ChevronRight } from "lucide-react";
+import { ArrowLeft, Search, ArrowUpRight, QrCode, Zap, Building2, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTransactions } from "@/contexts/TransactionContext";
 import BottomNav from "@/components/BottomNav";
 
 const transferTypes = [
@@ -20,8 +21,10 @@ const recentContacts = [
 
 const Transferir = () => {
   const navigate = useNavigate();
+  const { addTransaction, balanceCents } = useTransactions();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [recipient, setRecipient] = useState("");
+  const [recipientName, setRecipientName] = useState("");
   const [amount, setAmount] = useState("");
   const [step, setStep] = useState<"select" | "form">("select");
 
@@ -47,8 +50,27 @@ const Transferir = () => {
       toast.error("Preencha todos os campos");
       return;
     }
-    toast.success(`Transferência ${selectedType} enviada com sucesso!`);
+    const amountValue = Number(amount) / 100;
+    if (amountValue * 100 > balanceCents) {
+      toast.error("Saldo insuficiente");
+      return;
+    }
+
+    const name = recipientName || recipient.trim();
+
+    addTransaction({
+      title: `Transferência para ${name}`,
+      description: `${selectedType} enviado para ${recipient}`,
+      amount: -amountValue,
+      type: "expense",
+      category: "Transferência",
+      method: selectedType || "PIX",
+      recipient: name,
+    });
+
+    toast.success(`${selectedType} de ${formatInputCurrency(amount)} enviado para ${name}!`);
     setRecipient("");
+    setRecipientName("");
     setAmount("");
     setStep("select");
     setSelectedType(null);
@@ -56,12 +78,14 @@ const Transferir = () => {
 
   const handleSelectContact = (contact: typeof recentContacts[0]) => {
     setRecipient(contact.key);
+    setRecipientName(contact.name);
     toast(`Destinatário: ${contact.name}`);
   };
 
+  const balanceFormatted = (balanceCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto relative pb-24">
-      {/* Header */}
       <div className="bg-primary px-5 pt-12 pb-6">
         <div className="flex items-center gap-3">
           <motion.button
@@ -88,7 +112,6 @@ const Transferir = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            {/* Transfer types */}
             <div className="px-4 mt-5">
               <h3 className="text-sm font-heading font-semibold text-muted-foreground mb-3 px-1">Tipo de transferência</h3>
               <div className="space-y-2.5">
@@ -115,7 +138,6 @@ const Transferir = () => {
               </div>
             </div>
 
-            {/* Recent contacts */}
             <div className="px-4 mt-6">
               <h3 className="text-sm font-heading font-semibold text-muted-foreground mb-3 px-1">Contatos recentes</h3>
               <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
@@ -152,21 +174,19 @@ const Transferir = () => {
             exit={{ opacity: 0, x: 20 }}
             className="px-4 mt-5"
           >
-            {/* Recipient */}
             <div className="mb-4">
               <label className="text-xs text-muted-foreground font-body mb-2 block px-1">Destinatário</label>
               <div className="relative">
                 <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input
                   value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
+                  onChange={(e) => { setRecipient(e.target.value); setRecipientName(""); }}
                   placeholder="CPF, e-mail, telefone ou chave PIX"
                   className="w-full bg-card border border-border rounded-2xl pl-11 pr-4 py-4 text-sm text-foreground font-body outline-none focus:border-accent/50 transition-colors placeholder:text-muted-foreground/50"
                 />
               </div>
             </div>
 
-            {/* Amount */}
             <div className="mb-6">
               <label className="text-xs text-muted-foreground font-body mb-2 block px-1">Valor</label>
               <div className="bg-card border border-border rounded-2xl p-5 text-center">
@@ -178,12 +198,11 @@ const Transferir = () => {
                   className="bg-transparent text-center font-heading font-bold text-3xl text-foreground outline-none w-full placeholder:text-muted-foreground/30"
                 />
                 <p className="text-[10px] text-muted-foreground/50 font-body mt-2">
-                  Saldo disponível: R$ 12.450,75
+                  Saldo disponível: {balanceFormatted}
                 </p>
               </div>
             </div>
 
-            {/* Quick amounts */}
             <div className="flex gap-2 mb-6">
               {[50, 100, 200, 500].map((val) => (
                 <motion.button
@@ -197,7 +216,6 @@ const Transferir = () => {
               ))}
             </div>
 
-            {/* Transfer button */}
             <motion.button
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.01 }}
