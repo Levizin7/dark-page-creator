@@ -52,7 +52,7 @@ const HeroSection = () => {
 
   return (
     <div className="relative">
-      <div className="bg-gradient-to-b from-primary/80 via-primary/60 to-primary/20 pt-12 pb-14 px-6 rounded-b-none">
+      <div className="bg-gradient-to-b from-primary/80 via-primary/60 to-primary/30 pt-12 pb-14 px-6">
         {/* Header row */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ const HeroSection = () => {
       </div>
 
       {/* Decorative animated waves - inverted, falling from card */}
-      <div className="absolute -bottom-[60px] left-0 right-0 h-[80px] pointer-events-none" style={{ zIndex: 1, transform: "scaleY(-1)" }}>
+      <div className="absolute -bottom-[80px] left-0 right-0 h-[100px] pointer-events-none" style={{ zIndex: 1, transform: "scaleY(-1)" }}>
         <svg className="w-full h-full" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="wave1Grad" x1="0" y1="0" x2="1" y2="0">
