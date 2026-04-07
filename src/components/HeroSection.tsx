@@ -5,38 +5,22 @@ import { useNavigate } from "react-router-dom";
 import novaLogo from "@/assets/novabank-logo.png";
 import NotificationSheet from "@/components/NotificationSheet";
 import { useTransactions } from "@/contexts/TransactionContext";
-
-const formatCurrencyFromCents = (cents: number) => {
-  const amount = cents / 100;
-  return amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-};
+import { useAuth } from "@/contexts/AuthContext";
 
 const HeroSection = () => {
-  const [name, setName] = useState("Carlos");
+  const { user } = useAuth();
+  const { balance, transactions } = useTransactions();
   const [editingName, setEditingName] = useState(false);
-  const { balanceCents } = useTransactions();
-  const [editingBalance, setEditingBalance] = useState(false);
-  const [localBalanceCents, setLocalBalanceCents] = useState(balanceCents);
   const [visible, setVisible] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
-  const balanceRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const income = 4200.0;
-  const expenses = 2780.5;
-  const budgetUsed = (expenses / income) * 100;
+  const displayName = user?.user_metadata?.full_name || "Usuário";
 
-  useEffect(() => {
-    if (editingName && nameRef.current) { nameRef.current.focus(); nameRef.current.select(); }
-  }, [editingName]);
-  useEffect(() => {
-    if (editingBalance && balanceRef.current) {
-      balanceRef.current.focus();
-      const val = balanceRef.current.value;
-      balanceRef.current.setSelectionRange(val.length, val.length);
-    }
-  }, [editingBalance]);
+  const income = transactions.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
+  const expenses = Math.abs(transactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0));
+  const budgetUsed = income > 0 ? (expenses / income) * 100 : 0;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -47,11 +31,6 @@ const HeroSection = () => {
 
   const formatCurrency = (val: number) =>
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-  const handleBalanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, "");
-    setLocalBalanceCents(Number(raw) || 0);
-  };
 
   return (
     <div className="relative">
@@ -64,23 +43,9 @@ const HeroSection = () => {
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-body tracking-wide">{getGreeting()},</p>
-              {editingName ? (
-                <input
-                  ref={nameRef}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onBlur={() => setEditingName(false)}
-                  onKeyDown={(e) => e.key === "Enter" && setEditingName(false)}
-                  className="bg-transparent text-foreground font-heading font-bold text-lg border-b border-accent outline-none w-32"
-                />
-              ) : (
-                <h1
-                  onClick={() => setEditingName(true)}
-                  className="font-heading font-bold text-lg text-foreground cursor-pointer hover:opacity-80 transition-opacity"
-                >
-                  {name}
-                </h1>
-              )}
+              <h1 className="font-heading font-bold text-lg text-foreground">
+                {displayName.split(" ")[0]}
+              </h1>
             </div>
           </div>
           <motion.button
@@ -102,28 +67,9 @@ const HeroSection = () => {
             </motion.button>
           </div>
           <div className="flex items-end justify-between">
-            <div>
-              {editingBalance ? (
-                <input
-                  ref={balanceRef}
-                  type="text"
-                  inputMode="numeric"
-                  value={formatCurrencyFromCents(balanceCents)}
-                  onChange={handleBalanceChange}
-                  onBlur={() => setEditingBalance(false)}
-                  onKeyDown={(e) => e.key === "Enter" && setEditingBalance(false)}
-                  placeholder="R$ 0,00"
-                  className="bg-transparent text-foreground font-heading font-bold text-[34px] leading-tight outline-none border-b border-accent w-full appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                />
-              ) : (
-                <h2
-                  onClick={() => setEditingBalance(true)}
-                  className="font-heading font-bold text-[34px] leading-tight text-foreground cursor-pointer hover:opacity-80 transition-opacity"
-                >
-                  {visible ? formatCurrencyFromCents(balanceCents) : "R$ ••••••"}
-                </h2>
-              )}
-            </div>
+            <h2 className="font-heading font-bold text-[34px] leading-tight text-foreground">
+              {visible ? formatCurrency(balance) : "R$ ••••••"}
+            </h2>
             <motion.button
               whileTap={{ scale: 0.95 }}
               whileHover={{ scale: 1.03 }}
@@ -167,7 +113,7 @@ const HeroSection = () => {
           <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${budgetUsed}%` }}
+              animate={{ width: `${Math.min(budgetUsed, 100)}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
               className="h-full rounded-full"
               style={{ background: "linear-gradient(90deg, hsl(217 91% 60%), hsl(200 80% 55%))" }}
@@ -191,43 +137,12 @@ const HeroSection = () => {
               <stop offset="100%" stopColor="hsl(222 47% 11%)" stopOpacity="0.7" />
             </linearGradient>
           </defs>
-          <motion.path
-            animate={{
-              d: [
-                "M0,40L48,45C96,50,192,60,288,58C384,56,480,42,576,38C672,34,768,42,864,46C960,50,1056,50,1152,46C1248,42,1344,34,1392,30L1440,26L1440,120L0,120Z",
-                "M0,30L48,35C96,40,192,50,288,54C384,58,480,58,576,50C672,42,768,30,864,26C960,22,1056,30,1152,38C1248,46,1344,50,1392,52L1440,54L1440,120L0,120Z",
-                "M0,40L48,45C96,50,192,60,288,58C384,56,480,42,576,38C672,34,768,42,864,46C960,50,1056,50,1152,46C1248,42,1344,34,1392,30L1440,26L1440,120L0,120Z",
-              ],
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            fill="url(#wave1Grad)"
-          />
-          <motion.path
-            animate={{
-              d: [
-                "M0,60L48,56C96,52,192,44,288,44C384,44,480,52,576,56C672,60,768,60,864,54C960,48,1056,38,1152,38C1248,38,1344,48,1392,54L1440,60L1440,120L0,120Z",
-                "M0,50L48,54C96,58,192,66,288,64C384,62,480,50,576,46C672,42,768,46,864,52C960,58,1056,66,1152,64C1248,62,1344,50,1392,44L1440,38L1440,120L0,120Z",
-                "M0,60L48,56C96,52,192,44,288,44C384,44,480,52,576,56C672,60,768,60,864,54C960,48,1056,38,1152,38C1248,38,1344,48,1392,54L1440,60L1440,120L0,120Z",
-              ],
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            fill="url(#wave2Grad)"
-          />
-          <motion.path
-            animate={{
-              d: [
-                "M0,80L60,76C120,72,240,64,360,62C480,60,600,66,720,72C840,78,960,82,1080,78C1200,74,1320,64,1380,60L1440,56L1440,120L0,120Z",
-                "M0,70L60,74C120,78,240,86,360,86C480,86,600,78,720,72C840,66,960,62,1080,62C1200,62,1320,66,1380,68L1440,70L1440,120L0,120Z",
-                "M0,80L60,76C120,72,240,64,360,62C480,60,600,66,720,72C840,78,960,82,1080,78C1200,74,1320,64,1380,60L1440,56L1440,120L0,120Z",
-              ],
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            fill="hsl(222 47% 11%)"
-          />
+          <motion.path animate={{ d: ["M0,40L48,45C96,50,192,60,288,58C384,56,480,42,576,38C672,34,768,42,864,46C960,50,1056,50,1152,46C1248,42,1344,34,1392,30L1440,26L1440,120L0,120Z","M0,30L48,35C96,40,192,50,288,54C384,58,480,58,576,50C672,42,768,30,864,26C960,22,1056,30,1152,38C1248,46,1344,50,1392,52L1440,54L1440,120L0,120Z","M0,40L48,45C96,50,192,60,288,58C384,56,480,42,576,38C672,34,768,42,864,46C960,50,1056,50,1152,46C1248,42,1344,34,1392,30L1440,26L1440,120L0,120Z"] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} fill="url(#wave1Grad)" />
+          <motion.path animate={{ d: ["M0,60L48,56C96,52,192,44,288,44C384,44,480,52,576,56C672,60,768,60,864,54C960,48,1056,38,1152,38C1248,38,1344,48,1392,54L1440,60L1440,120L0,120Z","M0,50L48,54C96,58,192,66,288,64C384,62,480,50,576,46C672,42,768,46,864,52C960,58,1056,66,1152,64C1248,62,1344,50,1392,44L1440,38L1440,120L0,120Z","M0,60L48,56C96,52,192,44,288,44C384,44,480,52,576,56C672,60,768,60,864,54C960,48,1056,38,1152,38C1248,38,1344,48,1392,54L1440,60L1440,120L0,120Z"] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} fill="url(#wave2Grad)" />
+          <motion.path animate={{ d: ["M0,80L60,76C120,72,240,64,360,62C480,60,600,66,720,72C840,78,960,82,1080,78C1200,74,1320,64,1380,60L1440,56L1440,120L0,120Z","M0,70L60,74C120,78,240,86,360,86C480,86,600,78,720,72C840,66,960,62,1080,62C1200,62,1320,66,1380,68L1440,70L1440,120L0,120Z","M0,80L60,76C120,72,240,64,360,62C480,60,600,66,720,72C840,78,960,82,1080,78C1200,74,1320,64,1380,60L1440,56L1440,120L0,120Z"] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} fill="hsl(222 47% 11%)" />
         </svg>
       </div>
 
-      {/* Notification Sheet */}
       <NotificationSheet open={showNotifications} onClose={() => setShowNotifications(false)} />
     </div>
   );
