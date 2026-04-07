@@ -1,18 +1,13 @@
-import { ShoppingCart, Coffee, Briefcase, Wifi, Music, Gift } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
-export const transactions = [
-  { icon: Briefcase, title: "Depósito de Salário", date: "05 Abr 2026 • 09:00", amount: 4200.0, type: "income" as const, category: "Salário" },
-  { icon: ShoppingCart, title: "Compra Amazon", date: "04 Abr 2026 • 14:32", amount: -89.99, type: "expense" as const, category: "Compras" },
-  { icon: Coffee, title: "Starbucks", date: "04 Abr 2026 • 08:15", amount: -6.5, type: "expense" as const, category: "Alimentação" },
-  { icon: Wifi, title: "Assinatura Netflix", date: "03 Abr 2026 • 00:00", amount: -15.99, type: "expense" as const, category: "Assinaturas" },
-  { icon: Gift, title: "Cashback Recebido", date: "02 Abr 2026 • 16:45", amount: 12.5, type: "income" as const, category: "Cashback" },
-  { icon: Music, title: "Spotify Premium", date: "01 Abr 2026 • 00:00", amount: -9.99, type: "expense" as const, category: "Assinaturas" },
-];
+import { useTransactions } from "@/contexts/TransactionContext";
 
 const RecentTransactions = () => {
   const navigate = useNavigate();
+  const { transactions, formatDate } = useTransactions();
+  const recent = transactions.slice(0, 6);
+
   const formatCurrency = (val: number) =>
     (val > 0 ? "+" : "") +
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -29,14 +24,15 @@ const RecentTransactions = () => {
         <button onClick={() => navigate("/extrato")} className="text-xs text-accent font-body font-medium">Ver tudo</button>
       </div>
       <div className="space-y-3">
-        {transactions.map((tx, i) => (
+        {recent.map((tx, i) => (
           <motion.div
-            key={i}
+            key={tx.id}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.35 + i * 0.05 }}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => navigate("/extrato")}
             className="flex items-center gap-3.5 glass rounded-2xl p-4 cursor-pointer hover:bg-white/[0.07] transition-all"
           >
             <div
@@ -44,14 +40,15 @@ const RecentTransactions = () => {
                 tx.type === "income" ? "bg-success/15" : "bg-destructive/15"
               }`}
             >
-              <tx.icon
-                size={18}
-                className={tx.type === "income" ? "text-success" : "text-destructive"}
-              />
+              {tx.type === "income" ? (
+                <ArrowDownLeft size={18} className="text-success" />
+              ) : (
+                <ArrowUpRight size={18} className="text-destructive" />
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-body font-medium text-foreground truncate">{tx.title}</p>
-              <p className="text-[11px] text-muted-foreground font-body">{tx.date}</p>
+              <p className="text-[11px] text-muted-foreground font-body">{formatDate(tx.timestamp)}</p>
             </div>
             <span
               className={`text-sm font-body font-semibold ${
