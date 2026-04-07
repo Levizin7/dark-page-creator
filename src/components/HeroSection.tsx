@@ -155,7 +155,7 @@ const HeroSection = () => {
         </div>
 
         {/* Budget bar */}
-        <div>
+        <div className="pb-[10px]">
           <div className="flex justify-between text-[10px] text-foreground/50 mb-1.5 font-body">
             <span>Orçamento usado</span>
             <span>{budgetUsed.toFixed(0)}%</span>
