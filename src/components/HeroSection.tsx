@@ -153,28 +153,54 @@ const HeroSection = () => {
 
         {/* Income / Expenses pills */}
         <div className="flex gap-3 mb-5">
-          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5">
+          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5 cursor-pointer" onClick={() => setEditingIncome(true)}>
             <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
               <TrendingUp size={14} className="text-success" />
             </div>
             <div>
               <p className="text-[10px] text-foreground/50 font-body">Receitas</p>
-              <p className="text-sm font-semibold text-success font-body">{formatCurrency(income)}</p>
+              {editingIncome ? (
+                <input
+                  ref={incomeRef}
+                  type="text"
+                  inputMode="numeric"
+                  value={formatCurrencyFromCents(incomeCents)}
+                  onChange={handleIncomeChange}
+                  onBlur={() => setEditingIncome(false)}
+                  onKeyDown={(e) => e.key === "Enter" && setEditingIncome(false)}
+                  className="bg-transparent text-success font-semibold text-sm font-body outline-none border-b border-accent w-24 appearance-none"
+                />
+              ) : (
+                <p className="text-sm font-semibold text-success font-body">{formatCurrency(income)}</p>
+              )}
             </div>
           </div>
-          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5">
+          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5 cursor-pointer" onClick={() => setEditingExpenses(true)}>
             <div className="w-8 h-8 rounded-lg bg-destructive/20 flex items-center justify-center">
               <TrendingDown size={14} className="text-destructive" />
             </div>
             <div>
               <p className="text-[10px] text-foreground/50 font-body">Despesas</p>
-              <p className="text-sm font-semibold text-destructive font-body">{formatCurrency(expenses)}</p>
+              {editingExpenses ? (
+                <input
+                  ref={expensesRef}
+                  type="text"
+                  inputMode="numeric"
+                  value={formatCurrencyFromCents(expensesCents)}
+                  onChange={handleExpensesChange}
+                  onBlur={() => setEditingExpenses(false)}
+                  onKeyDown={(e) => e.key === "Enter" && setEditingExpenses(false)}
+                  className="bg-transparent text-destructive font-semibold text-sm font-body outline-none border-b border-accent w-24 appearance-none"
+                />
+              ) : (
+                <p className="text-sm font-semibold text-destructive font-body">{formatCurrency(expenses)}</p>
+              )}
             </div>
           </div>
         </div>
 
         {/* Budget bar */}
-        <div className="pb-[10px]">
+        <div className="pb-5">
           <div className="flex justify-between text-[10px] text-foreground/50 mb-1.5 font-body">
             <span>Orçamento usado</span>
             <span>{budgetUsed.toFixed(0)}%</span>
