@@ -15,19 +15,13 @@ const HeroSection = () => {
   const [balanceCents, setBalanceCents] = useState(1245075); // R$ 12.450,75
   const [editingBalance, setEditingBalance] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [incomeCents, setIncomeCents] = useState(420000); // R$ 4.200,00
-  const [expensesCents, setExpensesCents] = useState(278050); // R$ 2.780,50
-  const [editingIncome, setEditingIncome] = useState(false);
-  const [editingExpenses, setEditingExpenses] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const balanceRef = useRef<HTMLInputElement>(null);
-  const incomeRef = useRef<HTMLInputElement>(null);
-  const expensesRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const income = incomeCents / 100;
-  const expenses = expensesCents / 100;
-  const budgetUsed = income > 0 ? (expenses / income) * 100 : 0;
+  const income = 4200.0;
+  const expenses = 2780.5;
+  const budgetUsed = (expenses / income) * 100;
 
   useEffect(() => {
     if (editingName && nameRef.current) { nameRef.current.focus(); nameRef.current.select(); }
@@ -35,16 +29,11 @@ const HeroSection = () => {
   useEffect(() => {
     if (editingBalance && balanceRef.current) {
       balanceRef.current.focus();
+      // place cursor at end
       const val = balanceRef.current.value;
       balanceRef.current.setSelectionRange(val.length, val.length);
     }
   }, [editingBalance]);
-  useEffect(() => {
-    if (editingIncome && incomeRef.current) { incomeRef.current.focus(); incomeRef.current.select(); }
-  }, [editingIncome]);
-  useEffect(() => {
-    if (editingExpenses && expensesRef.current) { expensesRef.current.focus(); expensesRef.current.select(); }
-  }, [editingExpenses]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -59,14 +48,6 @@ const HeroSection = () => {
   const handleBalanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, "");
     setBalanceCents(Number(raw) || 0);
-  };
-  const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, "");
-    setIncomeCents(Number(raw) || 0);
-  };
-  const handleExpensesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, "");
-    setExpensesCents(Number(raw) || 0);
   };
 
   return (
@@ -153,54 +134,28 @@ const HeroSection = () => {
 
         {/* Income / Expenses pills */}
         <div className="flex gap-3 mb-5">
-          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5 cursor-pointer" onClick={() => setEditingIncome(true)}>
+          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5">
             <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
               <TrendingUp size={14} className="text-success" />
             </div>
             <div>
               <p className="text-[10px] text-foreground/50 font-body">Receitas</p>
-              {editingIncome ? (
-                <input
-                  ref={incomeRef}
-                  type="text"
-                  inputMode="numeric"
-                  value={formatCurrencyFromCents(incomeCents)}
-                  onChange={handleIncomeChange}
-                  onBlur={() => setEditingIncome(false)}
-                  onKeyDown={(e) => e.key === "Enter" && setEditingIncome(false)}
-                  className="bg-transparent text-success font-semibold text-sm font-body outline-none border-b border-accent w-24 appearance-none"
-                />
-              ) : (
-                <p className="text-sm font-semibold text-success font-body">{formatCurrency(income)}</p>
-              )}
+              <p className="text-sm font-semibold text-success font-body">{formatCurrency(income)}</p>
             </div>
           </div>
-          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5 cursor-pointer" onClick={() => setEditingExpenses(true)}>
+          <div className="flex-1 flex items-center gap-2.5 glass rounded-xl px-3 py-2.5">
             <div className="w-8 h-8 rounded-lg bg-destructive/20 flex items-center justify-center">
               <TrendingDown size={14} className="text-destructive" />
             </div>
             <div>
               <p className="text-[10px] text-foreground/50 font-body">Despesas</p>
-              {editingExpenses ? (
-                <input
-                  ref={expensesRef}
-                  type="text"
-                  inputMode="numeric"
-                  value={formatCurrencyFromCents(expensesCents)}
-                  onChange={handleExpensesChange}
-                  onBlur={() => setEditingExpenses(false)}
-                  onKeyDown={(e) => e.key === "Enter" && setEditingExpenses(false)}
-                  className="bg-transparent text-destructive font-semibold text-sm font-body outline-none border-b border-accent w-24 appearance-none"
-                />
-              ) : (
-                <p className="text-sm font-semibold text-destructive font-body">{formatCurrency(expenses)}</p>
-              )}
+              <p className="text-sm font-semibold text-destructive font-body">{formatCurrency(expenses)}</p>
             </div>
           </div>
         </div>
 
         {/* Budget bar */}
-        <div className="pb-5">
+        <div className="pb-[10px]">
           <div className="flex justify-between text-[10px] text-foreground/50 mb-1.5 font-body">
             <span>Orçamento usado</span>
             <span>{budgetUsed.toFixed(0)}%</span>
