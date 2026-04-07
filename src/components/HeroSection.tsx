@@ -60,6 +60,14 @@ const HeroSection = () => {
     const raw = e.target.value.replace(/\D/g, "");
     setBalanceCents(Number(raw) || 0);
   };
+  const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    setIncomeCents(Number(raw) || 0);
+  };
+  const handleExpensesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    setExpensesCents(Number(raw) || 0);
+  };
 
   return (
     <div className="relative">
