@@ -35,11 +35,16 @@ const HeroSection = () => {
   useEffect(() => {
     if (editingBalance && balanceRef.current) {
       balanceRef.current.focus();
-      // place cursor at end
       const val = balanceRef.current.value;
       balanceRef.current.setSelectionRange(val.length, val.length);
     }
   }, [editingBalance]);
+  useEffect(() => {
+    if (editingIncome && incomeRef.current) { incomeRef.current.focus(); incomeRef.current.select(); }
+  }, [editingIncome]);
+  useEffect(() => {
+    if (editingExpenses && expensesRef.current) { expensesRef.current.focus(); expensesRef.current.select(); }
+  }, [editingExpenses]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
