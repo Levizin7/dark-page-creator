@@ -52,7 +52,7 @@ const HeroSection = () => {
 
   return (
     <div className="relative">
-      <div className="bg-primary pt-12 pb-14 px-6">
+      <div className="bg-primary pt-12 pb-1 px-6">
         {/* Header row */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
