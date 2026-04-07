@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import novaLogo from "@/assets/novabank-logo.png";
 import NotificationSheet from "@/components/NotificationSheet";
+import { useTransactions } from "@/contexts/TransactionContext";
 
 const formatCurrencyFromCents = (cents: number) => {
   const amount = cents / 100;
@@ -13,8 +14,9 @@ const formatCurrencyFromCents = (cents: number) => {
 const HeroSection = () => {
   const [name, setName] = useState("Carlos");
   const [editingName, setEditingName] = useState(false);
-  const [balanceCents, setBalanceCents] = useState(1245075);
+  const { balanceCents } = useTransactions();
   const [editingBalance, setEditingBalance] = useState(false);
+  const [localBalanceCents, setLocalBalanceCents] = useState(balanceCents);
   const [visible, setVisible] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -48,7 +50,7 @@ const HeroSection = () => {
 
   const handleBalanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, "");
-    setBalanceCents(Number(raw) || 0);
+    setLocalBalanceCents(Number(raw) || 0);
   };
 
   return (
