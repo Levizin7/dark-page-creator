@@ -5,9 +5,9 @@ import { toast } from "sonner";
 
 const actions = [
   { icon: ArrowUpRight, label: "Transferir", color: "bg-accent/15 text-accent", path: "/transferir" },
-  { icon: ArrowDownLeft, label: "Receber", color: "bg-success/15 text-success", path: null },
-  { icon: CreditCard, label: "Pagar", color: "bg-secondary/15 text-secondary", path: null },
-  { icon: ScanLine, label: "Escanear", color: "bg-muted-foreground/15 text-muted-foreground", path: null },
+  { icon: ArrowDownLeft, label: "Receber", color: "bg-success/15 text-success", path: "/receber" },
+  { icon: CreditCard, label: "Pagar", color: "bg-secondary/15 text-secondary", path: "/pagar" },
+  { icon: ScanLine, label: "Escanear", color: "bg-muted-foreground/15 text-muted-foreground", path: "/escanear" },
 ];
 
 const QuickActions = () => {
