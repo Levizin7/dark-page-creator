@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface Transaction {
   id: string;
@@ -10,12 +12,13 @@ export interface Transaction {
   category: string;
   method: string;
   recipient?: string;
-  timestamp: Date;
+  created_at: string;
 }
 
 const generateCode = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
+  let code = "NB";
+  code += String(Math.floor(Math.random() * 99) + 1).padStart(2, "0") + "-";
   for (let i = 0; i < 3; i++) {
     if (i > 0) code += "-";
     for (let j = 0; j < 4; j++) {
@@ -25,9 +28,8 @@ const generateCode = () => {
   return code;
 };
 
-const generateId = () => crypto.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2);
-
-const formatDate = (d: Date) => {
+export const formatTxDate = (dateStr: string) => {
+  const d = new Date(dateStr);
   const day = String(d.getDate()).padStart(2, "0");
   const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
   const month = months[d.getMonth()];
@@ -38,101 +40,66 @@ const formatDate = (d: Date) => {
   return `${day} ${month} ${year} • ${hours}:${mins}:${secs}`;
 };
 
-const initialTransactions: Transaction[] = [
-  {
-    id: generateId(),
-    code: "NB01-X8K2-9P3L",
-    title: "Depósito de Salário",
-    description: "Pagamento mensal - Empresa XYZ LTDA",
-    amount: 4200.0,
-    type: "income",
-    category: "Salário",
-    method: "TED",
-    timestamp: new Date(2026, 3, 5, 9, 0, 0),
-  },
-  {
-    id: generateId(),
-    code: "NB01-R4M7-2T6W",
-    title: "Compra Amazon",
-    description: "Pedido #304-2948271 - Amazon.com.br",
-    amount: -89.99,
-    type: "expense",
-    category: "Compras",
-    method: "Cartão Virtual",
-    timestamp: new Date(2026, 3, 4, 14, 32, 15),
-  },
-  {
-    id: generateId(),
-    code: "NB01-J5N1-8H4Q",
-    title: "Starbucks",
-    description: "Starbucks - Shopping Morumbi",
-    amount: -6.5,
-    type: "expense",
-    category: "Alimentação",
-    method: "Cartão Físico",
-    timestamp: new Date(2026, 3, 4, 8, 15, 42),
-  },
-  {
-    id: generateId(),
-    code: "NB01-L2P9-5F7V",
-    title: "Assinatura Netflix",
-    description: "Netflix - Plano Premium Mensal",
-    amount: -15.99,
-    type: "expense",
-    category: "Assinaturas",
-    method: "Cartão Virtual",
-    timestamp: new Date(2026, 3, 3, 0, 0, 0),
-  },
-  {
-    id: generateId(),
-    code: "NB01-W8C3-6K1B",
-    title: "Cashback Recebido",
-    description: "Cashback compra débito - Programa NovaBank",
-    amount: 12.5,
-    type: "income",
-    category: "Cashback",
-    method: "Sistema",
-    timestamp: new Date(2026, 3, 2, 16, 45, 30),
-  },
-  {
-    id: generateId(),
-    code: "NB01-D6Y4-3M9X",
-    title: "Spotify Premium",
-    description: "Spotify AB - Assinatura Premium Individual",
-    amount: -9.99,
-    type: "expense",
-    category: "Assinaturas",
-    method: "Cartão Virtual",
-    timestamp: new Date(2026, 3, 1, 0, 0, 0),
-  },
-];
-
 interface TransactionContextType {
   transactions: Transaction[];
-  balanceCents: number;
-  addTransaction: (tx: Omit<Transaction, "id" | "code" | "timestamp">) => void;
-  formatDate: (d: Date) => string;
+  balance: number;
+  loading: boolean;
+  addTransaction: (tx: { title: string; description: string; amount: number; type: "income" | "expense"; category: string; method: string; recipient?: string }) => Promise<void>;
+  refreshTransactions: () => Promise<void>;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [balanceCents, setBalanceCents] = useState(1245075);
+  const { user } = useAuth();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const addTransaction = (tx: Omit<Transaction, "id" | "code" | "timestamp">) => {
-    const newTx: Transaction = {
-      ...tx,
-      id: generateId(),
-      code: `NB${String(Math.floor(Math.random() * 99) + 1).padStart(2, "0")}-${generateCode()}`,
-      timestamp: new Date(),
-    };
-    setTransactions((prev) => [newTx, ...prev]);
-    setBalanceCents((prev) => prev + Math.round(tx.amount * 100));
+  const fetchTransactions = useCallback(async () => {
+    if (!user) { setTransactions([]); setLoading(false); return; }
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    if (!error && data) {
+      setTransactions(data.map(t => ({
+        ...t,
+        type: t.type as "income" | "expense",
+        description: t.description || "",
+        recipient: t.recipient || undefined,
+      })));
+    }
+    setLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const balance = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+
+  const addTransaction = async (tx: { title: string; description: string; amount: number; type: "income" | "expense"; category: string; method: string; recipient?: string }) => {
+    if (!user) return;
+    const code = generateCode();
+    const { error } = await supabase.from("transactions").insert({
+      user_id: user.id,
+      code,
+      title: tx.title,
+      description: tx.description,
+      amount: tx.amount,
+      type: tx.type,
+      category: tx.category,
+      method: tx.method,
+      recipient: tx.recipient || "",
+    });
+    if (!error) {
+      await fetchTransactions();
+    }
   };
 
   return (
-    <TransactionContext.Provider value={{ transactions, balanceCents, addTransaction, formatDate }}>
+    <TransactionContext.Provider value={{ transactions, balance, loading, addTransaction, refreshTransactions: fetchTransactions }}>
       {children}
     </TransactionContext.Provider>
   );
