@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import Extrato from "./pages/Extrato.tsx";
 import Cofrinhos from "./pages/Cofrinhos.tsx";
+import Transferir from "./pages/Transferir.tsx";
 import Notificacoes from "./pages/Notificacoes.tsx";
 import Perfil from "./pages/Perfil.tsx";
 import NotFound from "./pages/NotFound.tsx";
