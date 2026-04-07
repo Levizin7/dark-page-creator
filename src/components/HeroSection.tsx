@@ -1,22 +1,54 @@
-import { useState, useRef, useEffect } from "react";
-import { Eye, EyeOff, TrendingUp, TrendingDown, ArrowRight, Bell } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Eye, EyeOff, TrendingUp, TrendingDown, ArrowRight, Bell, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import novaLogo from "@/assets/novabank-logo.png";
+import vaultLogo from "@/assets/vaultbank-logo.png";
 import NotificationSheet from "@/components/NotificationSheet";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const HeroSection = () => {
   const { user } = useAuth();
   const { balance, transactions } = useTransactions();
-  const [editingName, setEditingName] = useState(false);
   const [visible, setVisible] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
-  const nameRef = useRef<HTMLInputElement>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [manualBalance, setManualBalance] = useState<number | null>(null);
+  const [editingBalance, setEditingBalance] = useState(false);
+  const [balanceInput, setBalanceInput] = useState("");
   const navigate = useNavigate();
 
   const displayName = user?.user_metadata?.full_name || "Usuário";
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      setIsAdmin(!!data);
+    };
+    const fetchManualBalance = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("manual_balance")
+        .eq("user_id", user.id)
+        .single();
+      if (data?.manual_balance !== null && data?.manual_balance !== undefined) {
+        setManualBalance(Number(data.manual_balance));
+      }
+    };
+    checkAdmin();
+    fetchManualBalance();
+  }, [user]);
+
+  const effectiveBalance = manualBalance !== null ? manualBalance : balance;
 
   const income = transactions.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const expenses = Math.abs(transactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0));
@@ -32,14 +64,36 @@ const HeroSection = () => {
   const formatCurrency = (val: number) =>
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+  const handleSaveBalance = async () => {
+    if (!user) return;
+    const raw = balanceInput.replace(/\D/g, "");
+    const cents = Number(raw) || 0;
+    const value = cents / 100;
+    await supabase.from("profiles").update({ manual_balance: value }).eq("user_id", user.id);
+    setManualBalance(value);
+    setEditingBalance(false);
+    toast.success("Saldo atualizado!");
+  };
+
+  const startEditBalance = () => {
+    setBalanceInput(String(Math.round(effectiveBalance * 100)));
+    setEditingBalance(true);
+  };
+
+  const formatInputCurrency = (raw: string) => {
+    const digits = raw.replace(/\D/g, "");
+    const cents = Number(digits) || 0;
+    if (cents === 0) return "";
+    return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  };
+
   return (
     <div className="relative">
       <div className="bg-primary pt-12 pb-1 px-6">
-        {/* Header row */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center ring-1 ring-white/15 shadow-lg">
-              <img src={novaLogo} alt="NovaBank" width={28} height={28} className="rounded-md" />
+              <img src={vaultLogo} alt="VaultBank" width={28} height={28} className="rounded-md" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-body tracking-wide">{getGreeting()},</p>
@@ -65,20 +119,51 @@ const HeroSection = () => {
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => setVisible(!visible)} className="p-0.5">
               {visible ? <Eye size={16} className="text-foreground/40" /> : <EyeOff size={16} className="text-foreground/40" />}
             </motion.button>
+            {isAdmin && !editingBalance && (
+              <motion.button whileTap={{ scale: 0.9 }} onClick={startEditBalance} className="p-1 rounded-lg bg-accent/10 ml-1">
+                <Pencil size={12} className="text-accent" />
+              </motion.button>
+            )}
           </div>
           <div className="flex items-end justify-between">
-            <h2 className="font-heading font-bold text-[34px] leading-tight text-foreground">
-              {visible ? formatCurrency(balance) : "R$ ••••••"}
-            </h2>
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.03 }}
-              onClick={() => navigate("/extrato")}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent/20 border border-accent/30 text-accent font-body font-semibold text-xs hover:bg-accent/30 transition-all shrink-0 ml-4"
-            >
-              Ver extrato
-              <ArrowRight size={14} />
-            </motion.button>
+            <div>
+              {editingBalance && isAdmin ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={formatInputCurrency(balanceInput)}
+                    onChange={(e) => setBalanceInput(e.target.value.replace(/\D/g, ""))}
+                    onKeyDown={(e) => e.key === "Enter" && handleSaveBalance()}
+                    placeholder="R$ 0,00"
+                    autoFocus
+                    className="bg-transparent text-foreground font-heading font-bold text-[34px] leading-tight outline-none border-b border-accent w-48"
+                  />
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleSaveBalance}
+                    className="px-3 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-body font-semibold"
+                  >
+                    Salvar
+                  </motion.button>
+                </div>
+              ) : (
+                <h2 className="font-heading font-bold text-[34px] leading-tight text-foreground">
+                  {visible ? formatCurrency(effectiveBalance) : "R$ ••••••"}
+                </h2>
+              )}
+            </div>
+            {!editingBalance && (
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                onClick={() => navigate("/extrato")}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent/20 border border-accent/30 text-accent font-body font-semibold text-xs hover:bg-accent/30 transition-all shrink-0 ml-4"
+              >
+                Ver extrato
+                <ArrowRight size={14} />
+              </motion.button>
+            )}
           </div>
         </div>
 

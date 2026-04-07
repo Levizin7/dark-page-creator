@@ -77,7 +77,7 @@ const Perfil = () => {
           <InfoRow label="CPF" value={profile?.cpf || "Não informado"} onCopy={profile?.cpf ? () => copyToClipboard(profile.cpf!, "CPF") : undefined} />
           <InfoRow label="Agência" value={profile?.agency || "0001"} onCopy={() => copyToClipboard(profile?.agency || "0001", "Agência")} />
           <InfoRow label="Conta" value={profile?.account_number || "---"} onCopy={() => copyToClipboard(profile?.account_number || "", "Conta")} />
-          <InfoRow label="Banco" value="NovaBank" />
+          <InfoRow label="Banco" value="VaultBank" />
           <InfoRow label="Telefone" value={profile?.phone || "Não informado"} onCopy={profile?.phone ? () => copyToClipboard(profile.phone!, "Telefone") : undefined} />
         </div>
       </div>

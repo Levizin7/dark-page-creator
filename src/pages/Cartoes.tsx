@@ -52,7 +52,7 @@ const Cartoes = () => {
           <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/5" />
           <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/5" />
           <div className="flex justify-between items-start relative z-10">
-            <div><p className="text-[10px] text-foreground/50 font-body uppercase tracking-widest">NovaBank</p><p className="text-xs text-foreground/70 font-body mt-0.5">{card.name}</p></div>
+            <div><p className="text-[10px] text-foreground/50 font-body uppercase tracking-widest">VaultBank</p><p className="text-xs text-foreground/70 font-body mt-0.5">{card.name}</p></div>
             <div className="flex items-center gap-2">
               <Wifi size={18} className="text-foreground/40 rotate-90" />
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowNumber(!showNumber)}>{showNumber ? <EyeOff size={16} className="text-foreground/50" /> : <Eye size={16} className="text-foreground/50" />}</motion.button>

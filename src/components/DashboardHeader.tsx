@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { motion } from "framer-motion";
-import novaLogo from "@/assets/novabank-logo.png";
+import vaultLogo from "@/assets/vaultbank-logo.png";
 
 const DashboardHeader = () => {
   const [name, setName] = useState("Carlos");
@@ -29,7 +29,7 @@ const DashboardHeader = () => {
       className="flex items-center justify-between px-5 pt-12 pb-4"
     >
       <div className="flex items-center gap-3">
-        <img src={novaLogo} alt="NovaBank" width={36} height={36} className="rounded-lg" />
+        <img src={vaultLogo} alt="VaultBank" width={36} height={36} className="rounded-lg" />
         <div>
           <p className="text-sm text-muted-foreground font-body">{getGreeting()},</p>
           {editing ? (
