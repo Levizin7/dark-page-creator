@@ -6,8 +6,8 @@ const tabs = [
   { icon: Home, label: "Início", path: "/" },
   { icon: ArrowLeftRight, label: "Transferir", path: "/" },
   { icon: PiggyBank, label: "Cofrinhos", path: "/cofrinhos" },
-  { icon: Bell, label: "Alertas", path: "/" },
-  { icon: User, label: "Perfil", path: "/" },
+  { icon: Bell, label: "Alertas", path: "/notificacoes" },
+  { icon: User, label: "Perfil", path: "/perfil" },
 ];
 
 const BottomNav = () => {
@@ -15,8 +15,13 @@ const BottomNav = () => {
   const location = useLocation();
 
   const getActiveIndex = () => {
-    if (location.pathname === "/cofrinhos") return 2;
-    return 0;
+    const map: Record<string, number> = {
+      "/": 0,
+      "/cofrinhos": 2,
+      "/notificacoes": 3,
+      "/perfil": 4,
+    };
+    return map[location.pathname] ?? 0;
   };
 
   const active = getActiveIndex();
