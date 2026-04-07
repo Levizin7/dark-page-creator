@@ -15,13 +15,19 @@ const HeroSection = () => {
   const [balanceCents, setBalanceCents] = useState(1245075); // R$ 12.450,75
   const [editingBalance, setEditingBalance] = useState(false);
   const [visible, setVisible] = useState(true);
+  const [incomeCents, setIncomeCents] = useState(420000); // R$ 4.200,00
+  const [expensesCents, setExpensesCents] = useState(278050); // R$ 2.780,50
+  const [editingIncome, setEditingIncome] = useState(false);
+  const [editingExpenses, setEditingExpenses] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const balanceRef = useRef<HTMLInputElement>(null);
+  const incomeRef = useRef<HTMLInputElement>(null);
+  const expensesRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const income = 4200.0;
-  const expenses = 2780.5;
-  const budgetUsed = (expenses / income) * 100;
+  const income = incomeCents / 100;
+  const expenses = expensesCents / 100;
+  const budgetUsed = income > 0 ? (expenses / income) * 100 : 0;
 
   useEffect(() => {
     if (editingName && nameRef.current) { nameRef.current.focus(); nameRef.current.select(); }
