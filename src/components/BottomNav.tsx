@@ -1,12 +1,12 @@
-import { Home, ArrowLeftRight, PiggyBank, Bell, User } from "lucide-react";
+import { Home, ArrowLeftRight, PiggyBank, CreditCard, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const tabs = [
   { icon: Home, label: "Início", path: "/" },
-  { icon: ArrowLeftRight, label: "Transferir", path: "/" },
+  { icon: ArrowLeftRight, label: "Transferir", path: "/transferir" },
   { icon: PiggyBank, label: "Cofrinhos", path: "/cofrinhos" },
-  { icon: Bell, label: "Alertas", path: "/notificacoes" },
+  { icon: CreditCard, label: "Cartões", path: "/" },
   { icon: User, label: "Perfil", path: "/perfil" },
 ];
 
@@ -17,8 +17,8 @@ const BottomNav = () => {
   const getActiveIndex = () => {
     const map: Record<string, number> = {
       "/": 0,
+      "/transferir": 1,
       "/cofrinhos": 2,
-      "/notificacoes": 3,
       "/perfil": 4,
     };
     return map[location.pathname] ?? 0;

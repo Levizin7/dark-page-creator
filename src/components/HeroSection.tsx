@@ -3,6 +3,7 @@ import { Eye, EyeOff, TrendingUp, TrendingDown, ArrowRight, Bell } from "lucide-
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import novaLogo from "@/assets/novabank-logo.png";
+import NotificationSheet from "@/components/NotificationSheet";
 
 const formatCurrencyFromCents = (cents: number) => {
   const amount = cents / 100;
@@ -12,9 +13,10 @@ const formatCurrencyFromCents = (cents: number) => {
 const HeroSection = () => {
   const [name, setName] = useState("Carlos");
   const [editingName, setEditingName] = useState(false);
-  const [balanceCents, setBalanceCents] = useState(1245075); // R$ 12.450,75
+  const [balanceCents, setBalanceCents] = useState(1245075);
   const [editingBalance, setEditingBalance] = useState(false);
   const [visible, setVisible] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const balanceRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -29,7 +31,6 @@ const HeroSection = () => {
   useEffect(() => {
     if (editingBalance && balanceRef.current) {
       balanceRef.current.focus();
-      // place cursor at end
       const val = balanceRef.current.value;
       balanceRef.current.setSelectionRange(val.length, val.length);
     }
@@ -82,6 +83,7 @@ const HeroSection = () => {
           </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
+            onClick={() => setShowNotifications(true)}
             className="relative p-2.5 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/15 transition-all ring-1 ring-white/10"
           >
             <Bell size={20} className="text-foreground/80" />
@@ -172,7 +174,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Waves integrated as bottom of the hero - same bg-primary, flowing down */}
+      {/* Waves */}
       <div className="bg-primary overflow-hidden pointer-events-none">
         <svg className="w-full h-[80px] block" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="1440" height="120" fill="hsl(217 60% 28%)" />
@@ -222,6 +224,9 @@ const HeroSection = () => {
           />
         </svg>
       </div>
+
+      {/* Notification Sheet */}
+      <NotificationSheet open={showNotifications} onClose={() => setShowNotifications(false)} />
     </div>
   );
 };

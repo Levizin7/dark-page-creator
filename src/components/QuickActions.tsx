@@ -1,15 +1,18 @@
 import { ArrowUpRight, ArrowDownLeft, CreditCard, ScanLine } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const actions = [
-  { icon: ArrowUpRight, label: "Transferir", color: "bg-accent/15 text-accent" },
-  { icon: ArrowDownLeft, label: "Receber", color: "bg-success/15 text-success" },
-  { icon: CreditCard, label: "Pagar", color: "bg-secondary/15 text-secondary" },
-  { icon: ScanLine, label: "Escanear", color: "bg-muted-foreground/15 text-muted-foreground" },
+  { icon: ArrowUpRight, label: "Transferir", color: "bg-accent/15 text-accent", path: "/transferir" },
+  { icon: ArrowDownLeft, label: "Receber", color: "bg-success/15 text-success", path: null },
+  { icon: CreditCard, label: "Pagar", color: "bg-secondary/15 text-secondary", path: null },
+  { icon: ScanLine, label: "Escanear", color: "bg-muted-foreground/15 text-muted-foreground", path: null },
 ];
 
 const QuickActions = () => {
+  const navigate = useNavigate();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -24,7 +27,7 @@ const QuickActions = () => {
             key={action.label}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.93 }}
-            onClick={() => toast(`${action.label} pressionado`)}
+            onClick={() => action.path ? navigate(action.path) : toast(`${action.label} pressionado`)}
             className="flex flex-col items-center gap-2.5"
           >
             <div className={`w-16 h-16 rounded-2xl ${action.color} glass flex items-center justify-center shadow-md transition-all hover:shadow-lg`}>
