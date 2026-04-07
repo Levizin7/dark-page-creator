@@ -6,7 +6,7 @@ const tabs = [
   { icon: Home, label: "Início", path: "/" },
   { icon: ArrowLeftRight, label: "Transferir", path: "/transferir" },
   { icon: PiggyBank, label: "Cofrinhos", path: "/cofrinhos" },
-  { icon: CreditCard, label: "Cartões", path: "/" },
+  { icon: CreditCard, label: "Cartões", path: "/cartoes" },
   { icon: User, label: "Perfil", path: "/perfil" },
 ];
 
@@ -19,6 +19,7 @@ const BottomNav = () => {
       "/": 0,
       "/transferir": 1,
       "/cofrinhos": 2,
+      "/cartoes": 3,
       "/perfil": 4,
     };
     return map[location.pathname] ?? 0;
