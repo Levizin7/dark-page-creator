@@ -14,7 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cofrinhos: {
+        Row: {
+          created_at: string
+          goal: number
+          icon: string
+          id: string
+          name: string
+          saved: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          goal?: number
+          icon?: string
+          id?: string
+          name: string
+          saved?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          goal?: number
+          icon?: string
+          id?: string
+          name?: string
+          saved?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          account_number: string
+          agency: string
+          cpf: string | null
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_number?: string
+          agency?: string
+          cpf?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          agency?: string
+          cpf?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          category: string
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          method: string
+          recipient: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category?: string
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          method?: string
+          recipient?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          method?: string
+          recipient?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
