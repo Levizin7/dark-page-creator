@@ -10,6 +10,9 @@ import Extrato from "./pages/Extrato.tsx";
 import Cofrinhos from "./pages/Cofrinhos.tsx";
 import Transferir from "./pages/Transferir.tsx";
 import Cartoes from "./pages/Cartoes.tsx";
+import Receber from "./pages/Receber.tsx";
+import Pagar from "./pages/Pagar.tsx";
+import Escanear from "./pages/Escanear.tsx";
 import Perfil from "./pages/Perfil.tsx";
 import Auth from "./pages/Auth.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -38,6 +41,9 @@ const AppRoutes = () => (
     <Route path="/cofrinhos" element={<ProtectedRoute><Cofrinhos /></ProtectedRoute>} />
     <Route path="/transferir" element={<ProtectedRoute><Transferir /></ProtectedRoute>} />
     <Route path="/cartoes" element={<ProtectedRoute><Cartoes /></ProtectedRoute>} />
+    <Route path="/receber" element={<ProtectedRoute><Receber /></ProtectedRoute>} />
+    <Route path="/pagar" element={<ProtectedRoute><Pagar /></ProtectedRoute>} />
+    <Route path="/escanear" element={<ProtectedRoute><Escanear /></ProtectedRoute>} />
     <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
