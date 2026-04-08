@@ -158,7 +158,7 @@ const Auth = () => {
                     placeholder="Nome completo"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full bg-card/50 backdrop-blur-md border border-border/50 rounded-2xl pl-14 pr-4 py-4 text-sm text-foreground font-body outline-none focus:border-accent/50 focus:bg-card/80 transition-all placeholder:text-muted-foreground/40"
+                    className="w-full bg-card/80 border border-border/50 rounded-2xl pl-14 pr-4 py-4 text-sm text-foreground font-body outline-none focus:border-accent/50 focus:bg-card transition-all placeholder:text-muted-foreground/40"
                   />
                 </motion.div>
               )}
@@ -173,7 +173,7 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-card/50 backdrop-blur-md border border-border/50 rounded-2xl pl-14 pr-4 py-4 text-sm text-foreground font-body outline-none focus:border-accent/50 focus:bg-card/80 transition-all placeholder:text-muted-foreground/40"
+                  className="w-full bg-card/80 border border-border/50 rounded-2xl pl-14 pr-4 py-4 text-sm text-foreground font-body outline-none focus:border-accent/50 focus:bg-card transition-all placeholder:text-muted-foreground/40"
                 />
               </div>
 
@@ -188,7 +188,7 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full bg-card/50 backdrop-blur-md border border-border/50 rounded-2xl pl-14 pr-14 py-4 text-sm text-foreground font-body outline-none focus:border-accent/50 focus:bg-card/80 transition-all placeholder:text-muted-foreground/40"
+                  className="w-full bg-card/80 border border-border/50 rounded-2xl pl-14 pr-14 py-4 text-sm text-foreground font-body outline-none focus:border-accent/50 focus:bg-card transition-all placeholder:text-muted-foreground/40"
                 />
                 <button
                   type="button"
