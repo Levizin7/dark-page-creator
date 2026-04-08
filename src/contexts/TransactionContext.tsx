@@ -53,22 +53,27 @@ const TransactionContext = createContext<TransactionContextType | undefined>(und
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [manualBalance, setManualBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchTransactions = useCallback(async () => {
-    if (!user) { setTransactions([]); setLoading(false); return; }
-    const { data, error } = await supabase
-      .from("transactions")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-    if (!error && data) {
-      setTransactions(data.map(t => ({
+    if (!user) { setTransactions([]); setManualBalance(null); setLoading(false); return; }
+
+    const [txRes, profileRes] = await Promise.all([
+      supabase.from("transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("profiles").select("manual_balance").eq("user_id", user.id).maybeSingle(),
+    ]);
+
+    if (!txRes.error && txRes.data) {
+      setTransactions(txRes.data.map(t => ({
         ...t,
         type: t.type as "income" | "expense",
         description: t.description || "",
         recipient: t.recipient || undefined,
       })));
+    }
+    if (!profileRes.error && profileRes.data) {
+      setManualBalance(profileRes.data.manual_balance);
     }
     setLoading(false);
   }, [user]);
@@ -77,7 +82,8 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  const balance = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+  const txBalance = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+  const balance = manualBalance !== null ? manualBalance + txBalance : txBalance;
 
   const addTransaction = async (tx: { title: string; description: string; amount: number; type: "income" | "expense"; category: string; method: string; recipient?: string }) => {
     if (!user) return;
