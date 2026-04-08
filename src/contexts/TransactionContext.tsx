@@ -54,14 +54,15 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [manualBalance, setManualBalance] = useState<number | null>(null);
+  const [balanceSetAt, setBalanceSetAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchTransactions = useCallback(async () => {
-    if (!user) { setTransactions([]); setManualBalance(null); setLoading(false); return; }
+    if (!user) { setTransactions([]); setManualBalance(null); setBalanceSetAt(null); setLoading(false); return; }
 
     const [txRes, profileRes] = await Promise.all([
       supabase.from("transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("profiles").select("manual_balance").eq("user_id", user.id).maybeSingle(),
+      supabase.from("profiles").select("manual_balance, updated_at").eq("user_id", user.id).maybeSingle(),
     ]);
 
     if (!txRes.error && txRes.data) {
@@ -74,6 +75,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     }
     if (!profileRes.error && profileRes.data) {
       setManualBalance(profileRes.data.manual_balance);
+      setBalanceSetAt(profileRes.data.updated_at);
     }
     setLoading(false);
   }, [user]);
@@ -82,7 +84,11 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  const txBalance = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+  // When manual_balance is set, only count transactions created AFTER it was set
+  const relevantTx = manualBalance !== null && balanceSetAt
+    ? transactions.filter(tx => new Date(tx.created_at) > new Date(balanceSetAt))
+    : transactions;
+  const txBalance = relevantTx.reduce((sum, tx) => sum + tx.amount, 0);
   const balance = manualBalance !== null ? manualBalance + txBalance : txBalance;
 
   const addTransaction = async (tx: { title: string; description: string; amount: number; type: "income" | "expense"; category: string; method: string; recipient?: string }) => {
