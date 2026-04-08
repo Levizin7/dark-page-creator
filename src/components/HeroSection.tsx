@@ -48,7 +48,7 @@ const HeroSection = () => {
     fetchManualBalance();
   }, [user]);
 
-  const effectiveBalance = manualBalance !== null ? manualBalance : balance;
+  const effectiveBalance = balance;
 
   const income = transactions.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const expenses = Math.abs(transactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0));
@@ -69,7 +69,7 @@ const HeroSection = () => {
     const raw = balanceInput.replace(/\D/g, "");
     const cents = Number(raw) || 0;
     const value = cents / 100;
-    await supabase.from("profiles").update({ manual_balance: value }).eq("user_id", user.id);
+    await supabase.from("profiles").update({ manual_balance: value, balance_set_at: new Date().toISOString() }).eq("user_id", user.id);
     setManualBalance(value);
     setEditingBalance(false);
     toast.success("Saldo atualizado!");

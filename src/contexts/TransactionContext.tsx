@@ -62,7 +62,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
 
     const [txRes, profileRes] = await Promise.all([
       supabase.from("transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("profiles").select("manual_balance, updated_at").eq("user_id", user.id).maybeSingle(),
+      supabase.from("profiles").select("manual_balance, balance_set_at").eq("user_id", user.id).maybeSingle(),
     ]);
 
     if (!txRes.error && txRes.data) {
@@ -75,7 +75,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     }
     if (!profileRes.error && profileRes.data) {
       setManualBalance(profileRes.data.manual_balance);
-      setBalanceSetAt(profileRes.data.updated_at);
+      setBalanceSetAt(profileRes.data.balance_set_at);
     }
     setLoading(false);
   }, [user]);
@@ -84,7 +84,18 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // When manual_balance is set, only count transactions created AFTER it was set
+  // Realtime: auto-refresh on transaction or profile changes
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel('balance-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${user.id}` }, () => fetchTransactions())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `user_id=eq.${user.id}` }, () => fetchTransactions())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user, fetchTransactions]);
+
+  // Only count transactions AFTER balance was manually set
   const relevantTx = manualBalance !== null && balanceSetAt
     ? transactions.filter(tx => new Date(tx.created_at) > new Date(balanceSetAt))
     : transactions;
