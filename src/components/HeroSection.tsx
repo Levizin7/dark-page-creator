@@ -92,9 +92,7 @@ const HeroSection = () => {
       <div className="bg-primary pt-12 pb-1 px-6">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center ring-1 ring-white/15 shadow-lg">
-              <img src={vaultLogo} alt="VaultBank" width={28} height={28} className="rounded-md" />
-            </div>
+            <img src={vaultLogo} alt="VaultBank" className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(var(--accent),0.4)]" />
             <div>
               <p className="text-xs text-muted-foreground font-body tracking-wide">{getGreeting()},</p>
               <h1 className="font-heading font-bold text-lg text-foreground">
