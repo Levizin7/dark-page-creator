@@ -29,7 +29,7 @@ const DashboardHeader = () => {
       className="flex items-center justify-between px-5 pt-12 pb-4"
     >
       <div className="flex items-center gap-3">
-        <img src={vaultLogo} alt="VaultBank" width={36} height={36} className="rounded-lg" />
+        <img src={vaultLogo} alt="VaultBank" className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(var(--accent),0.4)]" />
         <div>
           <p className="text-sm text-muted-foreground font-body">{getGreeting()},</p>
           {editing ? (
