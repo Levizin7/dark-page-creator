@@ -51,6 +51,7 @@ export type Database = {
         Row: {
           account_number: string
           agency: string
+          balance_set_at: string | null
           cpf: string | null
           created_at: string
           full_name: string
@@ -63,6 +64,7 @@ export type Database = {
         Insert: {
           account_number?: string
           agency?: string
+          balance_set_at?: string | null
           cpf?: string | null
           created_at?: string
           full_name?: string
@@ -75,6 +77,7 @@ export type Database = {
         Update: {
           account_number?: string
           agency?: string
+          balance_set_at?: string | null
           cpf?: string | null
           created_at?: string
           full_name?: string
