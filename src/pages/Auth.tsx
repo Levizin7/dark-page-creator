@@ -74,9 +74,9 @@ const Auth = () => {
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
-            className="w-24 h-24 rounded-3xl bg-gradient-to-br from-accent/20 to-primary/30 backdrop-blur-xl flex items-center justify-center mx-auto mb-5 ring-1 ring-white/10 shadow-2xl shadow-accent/10"
+            className="w-28 h-28 flex items-center justify-center mx-auto mb-5"
           >
-            <img src={vaultLogo} alt="VaultBank" width={56} height={56} className="rounded-xl" />
+            <img src={vaultLogo} alt="VaultBank" className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(var(--accent),0.3)]" />
           </motion.div>
           <motion.h1
             initial={{ y: 20, opacity: 0 }}
